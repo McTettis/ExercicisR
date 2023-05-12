@@ -9,11 +9,11 @@ df1 <- data.frame(
 #1. Cread dos data sets, uno con los males y otro con females
 library(dplyr)
 
-males <- df1 XXX
-XXX(sexo XXX "male")
+males <- df1 ___
+___(sexo ___ "male")
 
-females <- df1 XXX
-XXX(sexo XXX "female")
+females <- df1 ___
+___(sexo ___ "female")
 
 #2. Cual es la altura promedio de los hombres (en metros)?
 library(DataSummary)
@@ -30,51 +30,51 @@ library(DataSummary)
 #Debe poner en la parte inferior: Fuente: la del comedor
 #El titulo de la leyenda debe ser: Sexo
 #Los hombres deben estar en verde y las mujeres en rosa
-#Remplazad SOLO los XXX para obtener el grafico deseado
+#Remplazad SOLO los ___ para obtener el grafico deseado
 library(ggplot2)
 
-ggplot(XXX, aes(x = altura, fill = XXX)) + 
+ggplot(___, aes(x = altura, fill = ___)) + 
   geom_histogram(aes(y = after_stat(density)), bins = 20, 
                  color = "black") + 
   theme_bw() + 
-  theme(axis.title.y = XXX, 
+  theme(axis.title.y = ___, 
         axis.text.y = element_text(color = "black"),
         axis.text.x = element_text(color = "black"), 
-        XXX = "bottom") + 
-  XXX(x = "Altura (cm)", title = "XXX",
-       XXX = "Fuente: la del comedor") + 
-  guides(fill = guide_legend(XXX = "Sexo")) + 
-  XXX(breaks = c("male", "female"),
-                    values = XXX("green", "pink")) + 
-  XXX(sexo ~ .)
+        ___ = "bottom") + 
+  ___(x = "Altura (cm)", title = "___",
+       ___ = "Fuente: la del comedor") + 
+  guides(fill = guide_legend(___ = "Sexo")) + 
+  ___(breaks = c("male", "female"),
+                    values = ___("green", "pink")) + 
+  ___(sexo ~ .)
 
 
 
 #5. Comprobad usando un test de shapiro lo normalidad de ambos sexos
 
-XXX(males$XXX)
-XXX(females$XXX)
+___(males$___)
+___(females$___)
 
 #6. Comprobad la homogenidad de variancias
 library(car)
 
-leveneTest(XXX ~ XXX, XXX = df1)
+leveneTest(___ ~ ___, ___ = df1)
 
 #7. Utiliza el test apropiado para comprovar si existen diferencias significativas
 
-XXX(altura ~ XXX, XXX = df1, paired = XXX, var.eq = XXX)
+___(altura ~ ___, ___ = df1, paired = ___, var.eq = ___)
 
 #8. Cread un grafico de barras con la desviacion estandard (SD)
-ggplot(XXX, aes(x = sexo, y = altura, fill = XXX)) + 
+ggplot(___, aes(x = sexo, y = altura, fill = ___)) + 
   geom_col(color = "black") + 
-  XXX(aes(XXX = VarNum - XXX, ymax = XXX + SD), width=.1, 
+  ___(aes(___ = VarNum - ___, ymax = ___ + SD), width=.1, 
                 position=position_dodge(0.05)) +
   theme_bw() + 
-  theme(axis.text.XXX = element_text(color = "black"),
-        axis.text.XXX = element_text(color = "black"),
+  theme(axis.text.___ = element_text(color = "black"),
+        axis.text.___ = element_text(color = "black"),
         axis.title.x = element_blank(),
         legend.position = "bottom") + 
-  XXX(y = "Altura (cm)", title = "Alturas por sexos") + 
+  ___(y = "Altura (cm)", title = "Alturas por sexos") + 
   guides(fill = guide_legend(title = "Sexo")) + 
-  scale_fill_XXX(breaks = c("male", "female"),
+  scale_fill____(breaks = c("male", "female"),
                     values=c("green", "pink"))

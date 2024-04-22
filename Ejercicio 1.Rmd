@@ -1,0 +1,123 @@
+---
+title: "Exercici 1"
+output: html_notebook
+---
+Generaremos un data.frame a partir de dos vectores. El primero contendra la altura (en cm) y el segundo el sexo
+
+Dado que al generar las alturas le pediremos que genere una sequecia aleatoria de numeros debemos establecer una semilla para que siempre saque los mismos numeros.
+
+```{r}
+set.seed(1997) #Con la funcion set.seed() establecemos la semilla. Puedes usar el numero de semilla que quieras
+```
+Ahora tenemos la semilla establecida, en todos los ordeandores del mundo obtendras los mismos resultados
+
+Creamos el primer vector que contiene las alturas. Queremos una secuencia de 100 valores con una distribucion (correspondera a los hombres) y otra secuencia de 100 para las mujeres.
+
+```{r}
+altura_hombres <- rnorm(100, mean = 176, sd = 10) #Con esto obtendremos un vector de 100 valores con un promedio de 176 y una desviación de 10. Esto quedara almacenado en nuestro environ como "altura_hombres"
+
+altura_mujeres <- rnorm(100, mean = 162, sd = 10) #Con esto obtenemos los valores para las muejeres
+```
+Ahora tienes dos vectores uno para hombres y otro para muejeres. En nuestro dataframe queremos que todos estos esten en una misma columna. Para ello vamos a usar una funcion que nos permita añadir al final de un vector otro vector o valor. Esta es la funcion append()
+
+```{r}
+alturas <- append(altura_hombres, altura_mujeres) #Ahora tenemos un vector que contiene todas las alturas (200 valores)
+```
+Ahora toca crear un vector que contenga el sexo. Este vector debe tener el mismo orden que el de las alturas, 100 hombres y 100 mujeres. Como escribir 100 veces hombre no es demasiado divertido vamos a usar la funcion rep(). Esta funcion nos permite repetir "algo" las veces que queramos.
+
+Debemos crear dos repeticiones una con 100 "hombre" y otra con 100 "mujer" y ambas repeticiones deben estar dentro de un mismo vectro que luego transformaremos en una columna.
+
+La funcion rep() se escribe como: rep('valor', times = 'numero de veces que se repite')
+
+```{r}
+sexos <- c(___, ___) #Creamos un vector donde el primer valor sea una repeticion de 100 veces "hombre" y el segundo valor sea 100 veces "mujer"
+```
+Ahora deberias tener dos vectores uno llamado "alturas" y "sexo". Ahora debemos unirlos en un solo dataframe donde ambos vectores sean columas. 
+
+Creamos un dataframe llamado "df1". Para ello vamos a tener que assignar a "df1" el valor del resultado de la funcion data.frame()
+
+```{r}
+df1 <- data.frame( #Esta funcion permite crear dataframes a partir de columnas
+  Altura = alturas, #Aqui le decimos que cree una columna llamada "Altura" con los valores del vector alturas
+  Sexo = ___ #Aqui debemos hacer lo mismo con el vector "sexos"
+)
+```
+
+Ahora tienes unos datos de alturas y te preguntas ¿Son los hombres mas altos que las muejeres? ¿Cual es tu hipotesis?
+
+Para ello deberas realizar un test estadistico que nos permita comparar dos promedios. Este es la version simple de la ANOVA. Te presento la t-Studen. Studen-test tiene una serie de requisitos:
+
+@Las observaciones deben ser independientes (en este caso los valores de altura_hombres y los valores de altura_mujeres deben ser independientes entre ellos ¿Lo son?).
+
+@El conjunto de datos del que sacara el promedio deben tener una ditribucion normal.
+
+@Las variancias de ambos grupos deben ser iguales.
+
+Empezamos comprobando si son normales. Para ello debemos comprobar por separado los valores de hombres y muejeres. Vamos a crear un subset con una funcion de filtrado incluyda en el paquete "dplyr". Primero, intalla el paquete.
+
+```{r}
+___("dplyr") #Recuerdas cual era la funcion?
+#Ahora esta instalado, pero no lo tienes cargado. Cargalo
+library(___) 
+```
+
+Ahora vamos a crear un subset con los valores de altura de los hombres (y tu diras, si ya lo tenemos, lo hemos creado al principio. Es cierto pero este es un ejercicio recilcado de Irene y no me apetece hacer uno nuevo de zero). 
+
+```{r}
+hombres <- df1 %>%          #El simbolo %>% se llama pipe, muy usado en dplyr siempre vamos a separar las ordenes con el. Antes de pedirle algo debemos poner un %>%.
+  filter(Sexo == "hombre")  #Filter significa que filtre los valores en los que en la columna Sexo ponga hombre
+
+#Repite el codigo para que cree uno con los valores de mujer (no hagas copy paste)
+mujeres <- ___
+```
+
+Comprovamos la normalidad con un test de Shapiro-Wilk. Esta funcion requeire que entremos un vectro de numeros que son los que mirara si siguen la normalidad. Para ello debemos sacar de hombres la primera columna en forma de vector
+
+```{r}
+shapiro.test(hombres$Altura) #Recuerda que $ saca la columna "altura" en forma de vector
+#¿Cual es la Ho? ¿Y la H1? ¿Tienen una ditribucion normal?
+```
+
+Ahora repetimos con los valores de mujeres
+
+```{r}
+shapiro.test(___$___)
+```
+
+Ahora comprovamos las variancias. Para ello usamos el LeveneTest del paquete "car". El otro dia instalamos dicho paquete por lo que no es necessario descargarlo, solo cargarlo.
+
+```{r}
+___(car)
+
+leveneTest(Altura ~ Sexo, data = df1)
+#¿Cual es la Ho? ¿Y la H1? ¿Existe homocedasticidad?
+```
+
+Ahora vamos a generar un histograma con las distribuciones. Primero haremos uno con ambos sexos en el mismo eje. Debemos cargar la libreria ggplot2
+
+```{r}
+library(ggplot2)
+
+ggplot(df1, aes(x = Altura, fill = Sexo)) + 
+  geom_histogram(aes(y = after_stat(density)), bins = 5, 
+                 color = "black") + 
+  theme_bw() + 
+  theme(axis.title.y = element_text(color = "black"), 
+                    axis.text.y = element_blank(),
+                    axis.text.x = element_blank(), 
+                    axis.title.x = element_blank(),
+                    axis.ticks.x = element_blank(), 
+                    legend.position = "bottom") + 
+  labs(y = "Densidad altura", x = "Altura (cm)", title = "Altura hombres vs mujeres") + 
+  guides(fill = guide_legend(title = "Sexo")) + 
+  scale_fill_manual(breaks = c("hombre", "mujer"),
+  values=c("#00BDFF", "#F300FF")) + 
+  facet_grid(sexo ~ .)
+```
+
+Con el histograma nos podemos hacer una idea de como son nuestros datos. Simpre debes graficar tus datos antes de hacer ningun test estadistico. Estos datos tienen un buen aspecto. Puedes realizar un t-test.
+
+```{r}
+t.test(___ ~ ___ , data = ___, var.equal = T) #Varible_numerica ~ Variable_categorica, data = nombre_data_frame
+#var.equal nos permite decirle si las variancias son iguales (TRUE) o no (FALSE)
+```

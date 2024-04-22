@@ -1,0 +1,55 @@
+---
+title: "Exercici 0"
+output: html_notebook
+---
+
+Empezamos recordando un poco los operadores matematicos. La formula para pasar de grados Fahrenheit a Celsius es:
+ºC = (ºF - 32) / 1.8
+
+Convierte 53ºF a ºC
+
+```{r}
+a <- 53
+
+
+```
+
+Crea un vector con valores que vayan del 1 al 100 de 2 en 2 y guardalo como vec1
+
+```{r}
+___ <- seq(___, ___, ___ = 2)
+```
+
+Si le hacemos las siguientes preguntas, cual sera la respuesta?
+
+5 > 5
+5 == 5
+FALSE < TRUE
+TRUE != FALSE
+
+Sobreescribe el vec1 con un vector que repita la palabra Albert 3 veces
+```{r}
+vec1 <- rep(___, times = ___)
+```
+Ahora crea un vector que contenga el operador logico FALSE 3 veces (a ves hacia donde va esto)
+```{r}
+vec2 <- rep(___, times = ___)
+```
+
+Ahora creamos otro vector con la palabra "FALSE"
+
+```{r}
+vec3 <- rep("FALSE", times = 3)
+```
+
+Vamos a juntar los tres vectores en una tabla donde cada vector sera una columna
+```{r}
+df <- ___(___, ___, ___)
+```
+
+Ahora haz una inspeccion de los datos. Que diferencia hay entre la segunda y la tercera columna?
+
+```{r}
+summary(df)
+```
+

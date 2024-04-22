@@ -1,0 +1,193 @@
+---
+title: "Ejercicio 2"
+output: html_notebook
+---
+
+En este ejercicio vamos a explorar un set de datos presente en R llamado iris. Como recordaras este contiene valores biometricos de distintas especies de plantas.
+
+Primero vamos a inspecionar que aspecto tiene nuestro dataframe
+
+```{r}
+View(iris)
+```
+
+Nuestra hipotesis es que la longitud del petalo variara en funcion de la especie dado que estas se encuentran en distintos entornos. Para ello deberemos realizar una ANOVA. La ANOVA (ANalysis Of VAriances) tiene las mismas assumpciones que el t-test.
+
+Vamos a realizar unos subsets con la variable Petal.Length de las tres especies.
+
+```{r}
+library(dplyr)
+iris %>%
+  group_by(Species) %>% #Agrupa en funcion de su valor en la columna "Species"
+  summarize(normalidad_p.valor = shapiro.test(Petal.Length)$p.value) #Calcula una nueva variable llamada "normalidad_p.valor". Para ello te iras a shapiro.test(Petal.Length) y cojeras el valor llamado p.value
+#¿Tienen una distribucion normal?
+```
+
+Ahora hacemos un levene
+
+```{r}
+library(___)
+
+leveneTest(___ ~ Species, data = ___)
+#¿Presentan homocedasticidad?
+```
+
+Vamos a tener que transformar las varibles para que cumplan los supositos. Prueba con un logaritmo
+
+```{r}
+leveneTest(___(Petal.Length, data = iris))
+#¿Presentan homocedasticidad?
+```
+
+Esta transformacion podria haber afectado a la nomralidad. Debemos volver a comprovarla.
+
+```{r}
+iris %>%
+  group_by(___) %>% 
+  summarize(normalidad_p.valor = shapiro.test(log(Petal.Length))$p.value)
+```
+
+Ahora la normalidad no se cumple, debemos probar con otra transformacion. Prueba con la raiz cuadrada
+
+```{r}
+iris %>%
+  group_by(Species) %>% 
+  summarize(normalidad_p.valor = shapiro.test(___(Petal.Length))$p.value)
+
+leveneTest(___(Petal.Length) ~ Species, data = iris)
+```
+
+Seguimos sin cumplir los supositos. Provemos con la inversa (1/)
+
+```{r}
+iris %>%
+  group_by(Species) %>% 
+  summarize(normalidad_p.valor = shapiro.test((1/(Petal.Length)))$p.value)
+
+leveneTest(1/(Petal.Length) ~ Species, data = iris)
+```
+
+Legados a este punto deberemos optar por un test no parametrico.
+
+Vamos a graficar en un histograma la distribucion. 
+
+@El grafico debe llamarse "Petal Lenght ditribution"
+@El eje y "Desntity"
+@El eje x "Petal length"
+@Debe tener la leyenda debajo
+@Queremos obtener las tres especies en ejes distintos
+
+```{r}
+library(___)
+
+ggplot(___, aes(x = Petal.Length, fill = ___)) + 
+  geom_histogram(aes(y = after_stat(density)), bins = 10, 
+                 color = "black") + 
+                 
+  theme_bw() + 
+  theme(axis.title.y = element_text(color = "black"), 
+                    axis.text.y = element_blank(),
+                    axis.text.x = element_blank(), 
+                    axis.title.x = element_blank(),
+                    axis.ticks.x = element_blank(), 
+                    legend.position = "___") + 
+  labs(y = "___", x = "___", title = "___") + 
+  guides(fill = guide_legend(title = "___")) + 
+  scale_fill_brewer(palette = "Pastel2") + 
+  facet_grid(___ ~ .)
+```
+
+Ahora vamos a realizar una test no parametrico. Usaremos un test llamado Kruskal-Wallis. La ventaja es que no requiere que los datos presenten una distribucion normal, pero deben ser independientes y tener homocedasticidad. Recuerda que con el logartimo teniamos homocedasticidad.
+
+```{r}
+petal_length_kw <- kruskal.test(log(___) ~ Species, data = ___)
+summary(petal_length_kw)
+#¿Existen diferencias entre especies?
+```
+
+Ahora sabes que hay diferencias, pero ¿entre que grupos? Para ello debemos ir un paso mas alla, debemos realizar un test post-hoc. Cada test tiene sus post-hoc. En el caso del Kruskal-Wallis el mas comun se llama Dunn test.
+Debemos entrar los datos como:
+dunn.test(variable numerica, varible categorica) ambas en forma de vector. Por lo que tendremos que pedirle que calcule el logritmo de una columna que esta en iris
+
+```{r}
+install.packages("dunn.test")
+library(dunn.test)
+dunn.test(log(iris$___), ___$Species, method = "bonferroni")
+#¿En que especies hay diferencias?
+#¿Que pasaria si aqui no salisen diferencias significativas anque si salieran en el Kruskall-Wallis? ¿Es posible?
+```
+
+Ahora vamos a graficar esto en un boxplot. Usaremos un ggplot pero debemos modificar la capa grafica.
+
+```{r}
+ggplot(___, aes(x = Species, y = ___, fill = ___)) + 
+  stat_boxplot(geom = "errorbar", width = 0.15) + 
+  geom_boxplot(color = "black") + 
+  theme_bw() + 
+  theme(axis.title.y = element_text(color = "black"), 
+                    axis.text.y = element_text(color = "black"),
+                    axis.text.x = ___,  #No quiero texto en el x
+                    axis.title.x = ___, #Ni titulo
+                    axis.ticks.x = ___, #Ni ticks
+                    legend.position = "right") + 
+  labs(y = "Petal Length", title = "Petal length en funcion de la especie") + 
+  guides(fill = guide_legend(title = "Especie")) + 
+  scale_fill_brewer(palette = "Pastel2")
+```
+
+Para terminar, hay veces que un grafico de barras es mejor. Vamos a graficarlo de esta forma.
+
+```{r}
+ggplot(___, aes(x = ___, y = ___, fill = ___)) + 
+  geom_col(color = "black") + 
+  theme_bw() + 
+  theme(axis.text.y = element_text(color = "black"),
+        axis.___.x = element_blank(),  #No quiero texto en el x
+        axis.___.x = element_blank(), #No quiero titulo
+        axis.___.x = element_blank(), #Que le jodan a los ticks
+        legend.position = "right") + 
+  labs(y = "Petal Length", title = "Petal length en funcion de la especie") + 
+  guides(fill = guide_legend(title = "Especie")) + 
+  scale_fill_brewer(palette = "Pastel2")
+```
+
+Como ves, a este grafico le falta algo. No tiene el error. Eso (a no ser que estudies ambientales) no es admitible, vamos a añadirle unas barras de error. Para ello deberemos calcularlas antes. Vamos a aydarnos de una funcion custom.
+Esta no es una funcion "oficial" y deberas descargarla des de mi github. Para ello vamos a utilizar el siguiente codigo.
+
+```{r}
+install.packages("devtools")
+library(devtools)
+install_github("McTettis/Data.Summary")
+```
+
+Ahora tendras un paquete llamado Data.Summary. Debemos cargarlo
+
+```{r}
+library(Data.Summary)
+```
+
+Este paquete contiene dos funciones. Por ahora solo veremos la primera. La funcion se llama data.summary(data_set, "Var numerica", "Var categorica (puede ser mas de una en forma de vector)"). Esta funcion generara una tabla con la desviacion. Deberemos almacenar dicha tabla en el evironment para ir a buscar los valores del error que vamos a introducir en el grafico
+
+```{r}
+data_sum <- data.summary(iris, "Petal.Length", "Species")
+data_sum
+```
+
+Ahora ya tenemos los valores del promedio y del error. Vamos a reacer el grafico
+
+```{r}
+ggplot(data_sum, aes(x = Species, y = ___, fill = Species)) + #¿Como se llama ahora el valor que queremos en el eje y?
+  geom_col(color = "black") + 
+  geom_errorbar(aes(ymin = mean - SE, ymax = mean + SE), width=.1,  #Con esta funcion vamos a introducir las barras de error
+                position=position_dodge(0.05)) +
+  theme_bw() + 
+  theme(axis.text.y = element_text(color = "black"),
+        ___.___.___ = element_blank(),  #No queremos texto en el eje x
+        ___.___.___ = element_blank(), #Ni titulo
+        ___.___.___ = element_blank(), #Ni ticks
+        legend.___ = "___") + #Queremos la leyenda debajo
+  labs(y = "Petal Length", title = "Petal length en funcion de la especie") + 
+  guides(fill = guide_legend(title = "Site")) + 
+  scale_fill_brewer(palette = "Pastel2")
+```
+

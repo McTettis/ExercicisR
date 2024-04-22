@@ -1,0 +1,72 @@
+---
+title: "Ejercicio 3"
+output: html_notebook
+---
+
+Para este ejercico vamos a usar unos datos reales. Vamos a introducirlos en forma de vector. El dataframe tendra 2 columnas, una llamada "glucosa" y la otra "humedad". Lo que vamos a introducir son la cantidad de glucosa presente en un biofilm bacteriano obtenido de los Monegros. Para facilitar el proceso te dare el vector con los valores de glucosa. Sin embargo, deberas crear el vector con la variable categorica. Los 9 primeros valores son "seco", los 12 siguientes "agua" y los 12 ultimos "humedo". Vamos alla.
+
+```{r}
+df1 <- data.frame(glucosa = c(6.03,6.49,6.07,21.00,24.61,17.42,
+                              311.63,414.40,231.15,
+                              8.63,30.72,0.85,4.94,24.19,
+                              22.49,1212.14,1105.86,1165.60,61.43,
+                              441.56,148.46,49.27,33.03,16.79,25.38,
+                              48.97,22.06,369.42,506.88,297.80,106.58,
+                              236.09,106.36),
+                  humedad = ___(___("seco", ___), ___("___", 12), ___("___", ___)) #Recuerda: esto es un vector formado con varias repeticiones de texto
+                  )
+```
+
+Vamos a realizar un histograma para ver como se comportan nuestros datos.
+
+```{r}
+library(ggplot2)
+ggplot(df1, aes(x = ___, fill = ___)) + 
+  geom_histogram(aes(y = after_stat(density)), ___ = 7, #el eje x debe estar repartido en 7 columnas
+                 color = "black") + 
+  theme_bw() + 
+  theme(___ = element_blank(), #eliminar el titulo del eje y
+        ___ = ___(color = "black"), #color de los numeros del eje y en negro
+        ___ = ___(color = "black"), #color de los numeros del eje x en negro
+        ___ = ___) + #No quiero leyenda
+  labs(x = "eq. de Glucosa (µg) / Peso seco (g)", title = 'Distribución de "glucose"',
+      caption = "Fuente: Mi TFG") + 
+  ___(palette = "Reds") + 
+  ___(humedad ~ .)
+```
+
+¿Que test debemos realizar? Queremos comprovar varios promedios. ¿Que asume dicho test?
+
+```{r}
+library(___) #¿Que paquete necesitamos para hacer un test de Levene?
+leveneTest(___ ~ ___, ___ = ___)
+```
+
+Vamos a construir el modelo ANOVA y lo llamaremos aov1
+
+```{r}
+___ <- aov(___ ~ humedad, data = ___)
+```
+
+Ahora debemos comprovar la normalidad de los residuos del modelo ANOVA, NO DE LOS DATOS. EN UNA ANOVA LA NORMALIDAD SIEMPRE SE MIRA DE LOS RESIDUOS DEL MODELO.
+Para ello usaremos el ya conocido Shapiro-Wilks. Los residuos son un vector dentro del modelo llamado residuals. Queremos que cojas en forma de vector la variable residuals del modelo aov1
+
+```{r}
+shapiro.test(aov1$___) #¿Hay normalidad?
+```
+
+Vamos a repetir el modelo pero usando el logaritmo de glucosa, lo llamaremos aov2. Tambien deberemos volver a comprovar la homocedasticidad.
+
+```{r}
+___ <- aov(___ ~ humedad, data = ___) #Creamos el modelo
+shapiro.test(___$___)                 #Comprovamos normalidad
+leveneTest(___ ~ ___, data = ___)     #Comprovamos homocedasticidad
+```
+
+Ahora debemos visualizar el summary del modelo que hemos creado.
+
+```{r}
+summary(___) #¿Hay diferencias entre grados de humedad?
+```
+
+Recuerda: sin fracaso no hay exito. Cada derrota te acerca a la victoria.

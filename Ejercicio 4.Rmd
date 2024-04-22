@@ -1,0 +1,90 @@
+---
+title: "Ejercicio 4"
+output: html_notebook
+---
+Vamos a generar un data frame con los pesos promedio de personas de distintos paises.
+
+```{r}
+set.seed(31416)
+df3 <- data.frame(
+  peso = c(rnorm(100, mean = 65.9, sd = 20),
+           rnorm(100, mean = 65.8, sd = 20), rnorm(100, mean = 80.5, sd = 20)),
+  pais = c(rep("españa", times = 100),
+           rep("portugal", times = 100), rep("egipto", times = 100))
+  )
+```
+Vamos a crear un histograma para visualizar la distribucion de los datos.
+
+```{r}
+library(___)
+
+___(df3, ___(x = ___, fill = ___)) + 
+  geom_histogram(aes(y = after_stat(density)), bins = 20, 
+                 color = "black") + 
+  theme_bw() + 
+  theme(___) + #sin titulo "y" + texto en "y" y "x" en negro + sin leyenda
+  ___(___ = "___", ___ = "___") + # titulo de "x": Peso (kg); titulo del grafico: Peso por paises
+  scale_fill_brewer(___ = "___") + # usar la paleta "Dark2"
+  ___(___ ~ .) # separados en funcion de "country"
+```
+
+Vamos a comprovar si hay diferencias entre paises. Para ello realizaremos una ANOVA. Primero debemos comprovar la homocedasticidad de los datos
+
+```{r}
+library(___)
+
+___(___ ~ ___, ___ = ___)
+```
+
+Ahora debemos crear el modelo ANOVA para comprovar si los residuos de este siguen una distribución normal
+
+```{r}
+___ <- aov(___ ~ ___, data = ___)
+```
+
+Comprueva la normalidad
+```{r}
+___(___$___)
+```
+
+Ahora haz un summary del modelo para ver el resultado
+
+```{r}
+___(___)
+```
+
+Realiza un pos-hoc Tukey
+
+```{r}
+___(aov1)
+```
+
+Realiza un grafico de caja para visualizar tus datos
+
+```{r}
+ggplot(___, aes(x = ___, y = ___, fill = ___)) + 
+  stat_boxplot(geom = "errorbar", width = 0.15) + #asi le gusta mas a Irene -_-
+  geom_boxplot(color = "black") + 
+  theme_bw() + 
+  theme(___) + #eje y: titulo i en negro; eje x: sin titulo ni texto ni ticks
+  ___(___) + #titulo del eje y: Peso (kg); titulo del grafico: Peso por paises
+  guides(fill = guide_legend(title = "Pais")) + 
+  ___(___ = "___") #llenar con la paleta "Dark2"
+```
+
+Realiza un grafico de barras con la SD
+
+```{r}
+library(DataSummary)
+data_sum <- data.summary(___, "___", "___")
+
+ggplot(data_sum, ___(___)) + 
+  ___(___) + #grafico de columas i borde en negro
+  ___(___(___ = peso - SD, ___ = peso + SD), width=.1, 
+                position=position_dodge(0.05)) +
+  theme_bw() +
+  theme(___) + #igual que el grafico anterior (no sirve copy paste)
+  ___(___) + #mismos titulos que antes
+  guides(fill = guide_legend(title = "Pais")) + 
+  ___(___ = "___") #misma paleta "Dark2"
+```
